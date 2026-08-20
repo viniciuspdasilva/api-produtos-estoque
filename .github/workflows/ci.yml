@@ -34,7 +34,7 @@ jobs:
 
       # Passo 3: Executa o mvn clean install
       - name: Compile Project
-        working-directory: ./api-produtos-estoque
+        working-directory: ./
         run: mvn clean compile
 
   tests:
