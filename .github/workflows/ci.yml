@@ -22,7 +22,7 @@ jobs:
     steps:
       # Passo 1: Baixa o código do repositório
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Passo 2: Instala o Java 25 no ambiente do GitHub
       - name: Setup JDK 25
@@ -37,11 +37,6 @@ jobs:
         working-directory: ./
         run: mvn clean compile
 
-  tests:
-    name: 🧪 Testes Unitários[JaCoCo]
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       # Passo 4: Executa os testes automatizados do Quarkus e gera o relatório JaCoCo (em XML)
       - name: Testes unitarios
         run: mvn test
@@ -49,20 +44,21 @@ jobs:
       # Passo 5.1: Salva o relatório como arquivo (Funciona sempre, em push ou PR)
       - name: Jacoco Report
         uses: actions/upload-artifact@v4
+
         with:
           name: jacoco-report
           path: ${{ github.workspace }}/target/site/jacoco/
           retention-days: 1
   # ---------------------------------------------------
-  # AÇÃO 3: COBERTURA (Gera a tabela visual no resumo)
+  # AÇÃO 2: COBERTURA (Gera a tabela visual no resumo)
   # ---------------------------------------------------
   coverage:
     name: 📊 Cobertura de Código
-    needs: tests # Espera os testes terminarem
+    needs: build # Espera os testes terminarem
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Baixa o XML que foi gerado no job anterior
       - name: Baixar artefato do JaCoCo
@@ -106,7 +102,7 @@ jobs:
               build-mode: none
       steps:
         - name: Checkout do código
-          uses: actions/checkout@v4
+          uses: actions/checkout@v7
         - name: Initialize CodeQL
           uses: github/codeql-action/init@v4
           with:
