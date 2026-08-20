@@ -64,7 +64,7 @@ jobs:
       - name: Baixar artefato do JaCoCo
         uses: actions/download-artifact@v4
         with:
-          name: relatorio-xml
+          name: jacoco-report
           path: target/jacoco-report/
 
       - name: Publicar Cobertura no Resumo
