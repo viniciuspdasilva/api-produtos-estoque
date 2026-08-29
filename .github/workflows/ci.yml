@@ -1,4 +1,4 @@
-name: Pipeline CI - JAVA
+name: 1. Integração Contínua (CI)
 
 on:
   push:
