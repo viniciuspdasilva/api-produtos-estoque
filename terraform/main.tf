@@ -8,6 +8,11 @@ variable "ssh_public_key" {
 
 # 1.Aws provider
 terraform {
+  backend "s3" {
+    bucket = "terraform-state-api-produtos-pucrs-2026"
+    key    = "dev/terraform.tfstate"
+    region = "us-east-1"
+  }
   required_providers {
     aws = {
       source  = "hashicorp/aws"
