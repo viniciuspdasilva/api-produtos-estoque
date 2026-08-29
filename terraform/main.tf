@@ -64,6 +64,11 @@ resource "aws_instance" "api_server" {
 
   # Associa o firewall criado acima a este servidor
   vpc_security_group_ids = [aws_security_group.api_sg.id]
+  key_name      = aws_key_pair.deployer_key.key_name
+
+
+  # Adicione esta linha para garantir o IP público:
+  associate_public_ip_address = true
 
   # -------------------------------------------------------------
   # SCRIPT DE INICIALIZAÇÃO (Bootstrapping)
@@ -84,8 +89,13 @@ resource "aws_instance" "api_server" {
     # Instala o docker
     apt-get install -y docker.io
 
+    systemctl start docker
+
+    systemctl enable docker
+
     # Dá permissão para o usuário 'ubuntu' rodar o Docker
     usermod -aG docker ubuntu
+
 
   EOF
 
@@ -94,5 +104,10 @@ resource "aws_instance" "api_server" {
     Environment = "Dev"
     Project     = "Fase1-DevOps"
   }
+}
+
+# Coloque isso na última linha do arquivo main.tf
+output "instance_public_ip" {
+  value = aws_instance.api_server.public_ip
 }
 
