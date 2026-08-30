@@ -81,6 +81,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            echo "⏳ Aguardando a AWS finalizar a instalação do Docker..."
+            cloud-init status --wait
             cd /home/ubuntu/app
             chmod +x deploy.sh
             ./deploy.sh
