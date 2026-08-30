@@ -1,0 +1,28 @@
+name: 🗑️ Destruir Infraestrutura (Limpeza)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  destroy:
+    name: 🔥 Apagar AWS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Destruir Recursos (Terraform Destroy)
+        working-directory: ./terraform
+        env:
+          # Ele usa os mesmos segredos que você já configurou!
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
+        run: |
+          terraform init
+          terraform destroy -auto-approve
+          echo "Limpeza concluída! Sua AWS está vazia e segura."
