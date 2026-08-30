@@ -44,6 +44,27 @@ jobs:
           terraform apply -auto-approve
           echo "EC2_IP=$(terraform output -raw instance_public_ip)" >> $GITHUB_ENV
 
+
+      - name: ⏳ Aguardar inicialização do servidor
+        run: |
+          echo "Aguardando o servidor ${{ env.EC2_IP }} acordar..."
+          tentativas=0
+          max_tentativas=15
+          
+          # O comando 'nc' tenta conectar na porta 22. O 'while' cria um loop.
+          while ! nc -zvw1 ${{ env.EC2_IP }} 22 2>/dev/null; do
+            if [ $tentativas -ge $max_tentativas ]; then
+              echo "❌ Timeout: A porta 22 não abriu após 3 minutos!"
+              echo "Isso geralmente indica que o Security Group bloqueou o acesso ou a máquina falhou."
+              exit 1 # Força o erro para cancelar o deploy e acionar o Rollback
+            fi
+            echo "Tentativa $((tentativas+1))/$max_tentativas - Porta ainda fechada. Tentando novamente..."
+            sleep 5
+            tentativas=$((tentativas+1))
+          done
+          
+          echo "✅ Porta 22 aberta! O servidor está pronto para receber os arquivos."
+
       - name: Send archives from AWS
         uses: appleboy/scp-action@v0.1.7
         with:
